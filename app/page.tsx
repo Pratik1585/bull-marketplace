@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import BullCard from '@/components/BullCard'
 import { prisma } from '@/lib/prisma'
 import Navbar from '@/components/Navbar'
