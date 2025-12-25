@@ -69,9 +69,16 @@ git push -u origin main
 
 **Framework Preset:** Next.js (auto-detected) ✅  
 **Root Directory:** `./` (leave as is) ✅  
-**Build Command:** `npm run build` (auto-filled) ✅  
+**Build Command:** `prisma generate && npm run build` ⚠️ **IMPORTANT: Change this!**  
 **Output Directory:** `.next` (auto-filled) ✅  
 **Install Command:** `npm install` (auto-filled) ✅
+
+**⚠️ CRITICAL:** Change the Build Command to:
+```
+prisma generate && npm run build
+```
+
+This ensures Prisma Client is generated before the build starts.
 
 **Click "Environment Variables" to add:**
 

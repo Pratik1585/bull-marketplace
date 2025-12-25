@@ -16,7 +16,17 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // Skip database operations during build
+        if (process.env.NEXT_PHASE === 'phase-production-build') {
+          return null
+        }
+
         try {
+          // Only connect to database if DATABASE_URL is available
+          if (!process.env.DATABASE_URL) {
+            return null
+          }
+
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           })
@@ -40,6 +50,10 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
           }
         } catch (error) {
+          // Silently fail during build
+          if (process.env.NEXT_PHASE === 'phase-production-build') {
+            return null
+          }
           console.error('Auth error:', error)
           return null
         }
