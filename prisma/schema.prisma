@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bulls     Bull[]
+}
+
+model Bull {
+  id            String   @id @default(cuid())
+  name          String   // बैलाचे नाव
+  breed         String   // जात
+  age           Int      // वय (वर्षे)
+  weight        Float    // वजन (किलो)
+  price         Float    // किंमत (रुपये)
+  district      String   // जिल्हा
+  taluka        String?  // तालुका
+  village       String?  // गाव
+  description   String?  // वर्णन
+  phone         String   // संपर्क फोन
+  whatsapp      String?  // WhatsApp नंबर
+  images        String[] // फोटो URL ची यादी
+  videoUrl      String?  // व्हिडिओ URL (YouTube किंवा MP4)
+  status        String   @default("Active") // Active, Sold
+  raceExperience String? // शर्यत अनुभव
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
