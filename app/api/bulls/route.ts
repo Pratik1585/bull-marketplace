@@ -4,6 +4,10 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
+// Mark as dynamic route
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 const bullSchema = z.object({
   name: z.string().min(1),
   breed: z.string().min(1),
