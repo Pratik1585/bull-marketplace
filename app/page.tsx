@@ -11,7 +11,9 @@ export default async function Home() {
   // Get only Active bulls, ordered by newest first
   const bulls = await prisma.bull.findMany({
     where: {
-      status: 'Active'
+      status: {
+        equals: 'Active',
+      }
     },
     include: {
       owner: {

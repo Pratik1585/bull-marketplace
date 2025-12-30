@@ -43,3 +43,5 @@ This ensures Prisma Client is generated before the build.
 3. Verify Prisma Client is generated (check build logs)
 4. Ensure all environment variables are set before build
 
+
+
