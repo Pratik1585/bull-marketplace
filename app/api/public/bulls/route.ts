@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
@@ -9,11 +7,10 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 export const revalidate = 300 // Cache for 5 minutes
 
-const bullSchema = z.object({
+const publicBullSchema = z.object({
   name: z.string().min(1),
   breed: z.string().min(1),
   age: z.number().int().positive(),
-  weight: z.number().positive(),
   price: z.number().positive(),
   district: z.string().min(1),
   taluka: z.string().optional(),
@@ -60,26 +57,36 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
+    // No authentication required for public bull registration
     const body = await request.json()
-    const data = bullSchema.parse({
+    const data = publicBullSchema.parse({
       ...body,
       videoUrl: body.videoUrl || undefined,
     })
 
+    // Find or create a public user for public registrations
+    let publicUser = await prisma.user.findFirst({
+      where: {
+        email: 'public@bullmarket.com'
+      }
+    })
+
+    if (!publicUser) {
+      publicUser = await prisma.user.create({
+        data: {
+          email: 'public@bullmarket.com',
+          name: 'Public User',
+          password: 'public_registration_only', // This user can't actually login
+        }
+      })
+    }
+
     const bull = await prisma.bull.create({
       data: {
         ...data,
-        ownerId: session.user.id,
-        status: 'Active',
+        weight: 0, // Default weight for public registrations (since weight is not collected)
+        ownerId: publicUser.id,
+        status: 'Active', // Public registrations are active by default
       },
       include: {
         owner: {
@@ -99,8 +106,9 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
+    console.error('Failed to create bull:', error)
     return NextResponse.json(
-      { error: 'Failed to create bull' },
+      { error: 'Failed to create bull', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

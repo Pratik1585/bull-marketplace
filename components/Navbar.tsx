@@ -61,20 +61,7 @@ export default function Navbar() {
                 </div>
               </>
             ) : (
-              <>
-                <Link
-                  href="/auth/signin"
-                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors px-3 py-2 rounded-lg hover:bg-gray-50"
-                >
-                  लॉगिन
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                >
-                  नोंदणी करा
-                </Link>
-              </>
+              <div></div>
             )}
           </div>
 
@@ -131,22 +118,7 @@ export default function Navbar() {
                 </div>
               </>
             ) : (
-              <>
-                <Link
-                  href="/auth/signin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium transition-colors"
-                >
-                  लॉगिन
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block mx-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2.5 rounded-lg font-semibold text-center"
-                >
-                  नोंदणी करा
-                </Link>
-              </>
+              <div></div>
             )}
           </div>
         )}

@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import BullCard from '@/components/BullCard'
+import BullCardSkeleton from '@/components/BullCardSkeleton'
 import Navbar from '@/components/Navbar'
 
 interface Bull {
@@ -36,13 +37,37 @@ interface HomePageProps {
 }
 
 export default function HomeClient({ session, initialBulls }: HomePageProps) {
-  const [bulls] = useState<Bull[]>(initialBulls)
+  const [bulls, setBulls] = useState<Bull[]>(initialBulls)
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [searchLoading, setSearchLoading] = useState(false)
 
-  // Filter bulls based on search term
-  const filteredBulls = bulls.filter(bull =>
-    bull.name.trim().toLowerCase().includes(searchTerm.trim().toLowerCase())
-  )
+  // Fetch bulls on mount if none provided
+  useEffect(() => {
+    if (initialBulls.length === 0) {
+      setLoading(true)
+      fetch('/api/public/bulls')
+        .then(res => res.json())
+        .then(data => {
+          setBulls(data.slice(0, 20)) // Limit to 20 for performance
+        })
+        .catch(error => {
+          console.error('Failed to fetch bulls:', error)
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [initialBulls.length])
+
+  // Filter bulls based on search term (memoized for performance)
+  const filteredBulls = useMemo(() => {
+    if (!searchTerm.trim()) return bulls
+    const trimmedSearch = searchTerm.trim().toLowerCase()
+    return bulls.filter(bull =>
+      bull.name.trim().toLowerCase().includes(trimmedSearch)
+    )
+  }, [bulls, searchTerm])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
@@ -65,40 +90,19 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
                 महाराष्ट्र बैलगाडा शर्यत बाजार
               </h1>
             </div>
-            <p className="text-lg sm:text-xl mb-4 opacity-95">
+            <p className="text-lg sm:text-xl mb-6 opacity-95">
               महाराष्ट्रातील सर्वोत्तम बैलगाडा शर्यत बैल शोधा
             </p>
 
-            {/* Login Notice */}
-            {!session && (
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 sm:p-5 border border-white/30 mt-4">
-                <div className="flex items-start gap-3">
-                  <div className="text-2xl sm:text-3xl flex-shrink-0">ℹ️</div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-lg sm:text-xl mb-1">
-                      नवीन बैल जोडण्यासाठी लॉगिन करा
-                    </p>
-                    <p className="text-sm sm:text-base opacity-90 mb-3">
-                      तुमचा बैल विक्रीसाठी सूचीबद्ध करण्यासाठी कृपया प्रथम लॉगिन किंवा नोंदणी करा.
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      <Link
-                        href="/auth/signin?callbackUrl=/seller/add"
-                        className="bg-white text-primary-700 px-5 py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                      >
-                        लॉगिन करा
-                      </Link>
-                      <Link
-                        href="/auth/signup"
-                        className="bg-primary-800 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary-900 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                      >
-                        नवीन खाते तयार करा
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* CTA Button - Top Right */}
+            <div className="absolute top-1 right-1 xs:top-2 xs:right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 lg:top-6 lg:right-6 xl:top-8 xl:right-8 z-10">
+              <Link
+                href="/register-bull"
+                className="inline-block bg-white text-primary-700 px-1.5 py-0.5 xs:px-2 xs:py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 xl:px-6 xl:py-3 rounded-md xs:rounded-lg sm:rounded-lg md:rounded-xl lg:rounded-xl xl:rounded-xl font-bold hover:bg-gray-100 transition-all duration-200 shadow-sm hover:shadow-md xs:shadow-md xs:hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl transform hover:-translate-y-0.5 border-2 border-white/30 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-base whitespace-nowrap"
+              >
+                🐂 तुमचा बैल विक्रीसाठी नोंदवा
+              </Link>
+            </div>
           </div>
 
           {/* Page Title */}
@@ -106,9 +110,14 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               विक्रीसाठी उपलब्ध बैल
             </h2>
-            <p className="text-gray-600 text-sm sm:text-base">
-              {filteredBulls.length} बैल उपलब्ध आहेत{searchTerm && ` (${bulls.length} पैकी फिल्टर केलेले)`}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-gray-600 text-sm sm:text-base">
+                {filteredBulls.length} बैल उपलब्ध आहेत{searchTerm && ` (${bulls.length} पैकी फिल्टर केलेले)`}
+              </p>
+              {searchLoading && (
+                <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-primary-600"></div>
+              )}
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -123,7 +132,12 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
                 type="text"
                 placeholder="बैलाचे नाव शोधा..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchLoading(true)
+                  setSearchTerm(e.target.value)
+                  // Brief loading state for UX
+                  setTimeout(() => setSearchLoading(false), 200)
+                }}
                 className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base"
               />
               {searchTerm && (
@@ -138,10 +152,19 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
               )}
             </div>
           </div>
+
         </div>
 
         {/* Bulls Grid - Flipkart Style */}
-        {filteredBulls.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <div key={index} className="animate-fadeIn" style={{ animationDelay: `${index * 0.05}s` }}>
+                <BullCardSkeleton />
+              </div>
+            ))}
+          </div>
+        ) : filteredBulls.length === 0 ? (
           <div className="text-center py-16 sm:py-20 bg-white rounded-2xl shadow-lg border border-gray-100">
             {searchTerm ? (
               <>
