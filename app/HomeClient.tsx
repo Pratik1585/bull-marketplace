@@ -189,21 +189,8 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
                   अजून कोणतेही बैल सूचीबद्ध नाहीत
                 </h3>
                 <p className="text-gray-600 text-base sm:text-lg mb-6 max-w-md mx-auto">
-                  पहिला बैल जोडा आणि तुमच्या व्यवसायाला सुरुवात करा
+                  पहिला बैल नोंदवा आणि बाजाराला सुरुवात करा
                 </p>
-                {!session && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 max-w-md mx-auto">
-                    <p className="text-blue-800 font-medium text-sm sm:text-base">
-                      💡 नोंद: नवीन बैल जोडण्यासाठी प्रथम लॉगिन करा
-                    </p>
-                  </div>
-                )}
-                <Link
-                  href={session ? "/seller/add" : "/auth/signin?callbackUrl=/seller/add"}
-                  className="inline-block bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-3.5 rounded-xl font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base sm:text-lg"
-                >
-                  {session ? "नवीन बैल जोडा" : "लॉगिन करा आणि बैल जोडा"}
-                </Link>
               </>
             )}
           </div>

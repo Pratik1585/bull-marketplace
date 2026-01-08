@@ -2,14 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import ImageUpload from './ImageUpload'
 
 export default function RegisterBullForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [uploadedImages, setUploadedImages] = useState<string[]>([])
   const [formData, setFormData] = useState({
     name: '',
     breed: '',
@@ -21,7 +19,6 @@ export default function RegisterBullForm() {
     description: '',
     phone: '',
     whatsapp: '',
-    videoUrl: '',
     raceExperience: '',
   })
 
@@ -31,12 +28,6 @@ export default function RegisterBullForm() {
     setError('')
 
     try {
-      if (uploadedImages.length === 0) {
-        setError('कृपया किमान एक फोटो जोडा')
-        setLoading(false)
-        return
-      }
-
       const response = await fetch('/api/public/bulls', {
         method: 'POST',
         headers: {
@@ -53,8 +44,6 @@ export default function RegisterBullForm() {
           description: formData.description || undefined,
           phone: formData.phone,
           whatsapp: formData.whatsapp || undefined,
-          images: uploadedImages,
-          videoUrl: formData.videoUrl || undefined,
           raceExperience: formData.raceExperience || undefined,
         }),
       })
@@ -300,49 +289,6 @@ export default function RegisterBullForm() {
               placeholder="10 अंकी नंबर (पर्यायी)"
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
             />
-          </div>
-        </div>
-      </div>
-
-      {/* Media */}
-      <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-          <span className="text-2xl">📸</span>
-          फोटो आणि व्हिडिओ
-        </h2>
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              बैलाच्या फोटो *
-            </label>
-            <ImageUpload
-              images={uploadedImages}
-              onImagesChange={setUploadedImages}
-              maxImages={10}
-            />
-            <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <span>💡</span>
-              किमान 1 आणि कमाल 10 फोटो अपलोड करा
-            </p>
-          </div>
-
-          <div className="border-t border-gray-200 pt-6">
-            <label htmlFor="videoUrl" className="block text-sm font-semibold text-gray-700 mb-2">
-              व्हिडिओ URL (YouTube किंवा MP4)
-            </label>
-            <input
-              type="url"
-              id="videoUrl"
-              name="videoUrl"
-              value={formData.videoUrl}
-              onChange={handleChange}
-              placeholder="https://youtube.com/watch?v=... किंवा https://example.com/video.mp4"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-            />
-            <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <span>💡</span>
-              YouTube लिंक किंवा थेट MP4 व्हिडिओ URL (पर्यायी)
-            </p>
           </div>
         </div>
       </div>

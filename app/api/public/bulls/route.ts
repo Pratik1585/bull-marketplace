@@ -18,8 +18,6 @@ const publicBullSchema = z.object({
   description: z.string().optional(),
   phone: z.string().min(10),
   whatsapp: z.string().optional(),
-  images: z.array(z.string()).min(1),
-  videoUrl: z.string().url().optional().or(z.literal('')),
   raceExperience: z.string().optional(),
 })
 
@@ -84,6 +82,7 @@ export async function POST(request: Request) {
     const bull = await prisma.bull.create({
       data: {
         ...data,
+        images: [], // Empty array for images since they're not collected in the form
         weight: 0, // Default weight for public registrations (since weight is not collected)
         ownerId: publicUser.id,
         status: 'Active', // Public registrations are active by default
