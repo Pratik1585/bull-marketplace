@@ -4,9 +4,7 @@ const nextConfig = {
 
   // Performance optimizations
   swcMinify: true,
-  experimental: {
-    optimizeCss: true,
-  },
+
 
   // Image optimization
   images: {
