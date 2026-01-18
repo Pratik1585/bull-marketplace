@@ -9,7 +9,21 @@ export default function AddBullForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string
+    breed: string
+    age: string
+    weight: string
+    price: string
+    district: string
+    taluka: string
+    village: string
+    description: string
+    phone: string
+    whatsapp: string
+    videos: string[]
+    raceExperience: string
+  }>({
     name: '',
     breed: '',
     age: '',
