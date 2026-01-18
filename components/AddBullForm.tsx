@@ -21,7 +21,7 @@ export default function AddBullForm() {
     description: '',
     phone: '',
     whatsapp: '',
-    videoUrl: '',
+    videos: [],
     raceExperience: '',
   })
 
@@ -55,7 +55,7 @@ export default function AddBullForm() {
           phone: formData.phone,
           whatsapp: formData.whatsapp || undefined,
           images: uploadedImages,
-          videoUrl: formData.videoUrl || undefined,
+          videos: formData.videos,
           raceExperience: formData.raceExperience || undefined,
         }),
       })
@@ -319,21 +319,24 @@ export default function AddBullForm() {
           </div>
 
           <div className="border-t border-gray-200 pt-6">
-            <label htmlFor="videoUrl" className="block text-sm font-semibold text-gray-700 mb-2">
-              व्हिडिओ URL (YouTube किंवा MP4)
+            <label htmlFor="videos" className="block text-sm font-semibold text-gray-700 mb-2">
+              व्हिडिओ URLs (YouTube किंवा MP4)
             </label>
-            <input
-              type="url"
-              id="videoUrl"
-              name="videoUrl"
-              value={formData.videoUrl}
-              onChange={handleChange}
-              placeholder="https://youtube.com/watch?v=... किंवा https://example.com/video.mp4"
+            <textarea
+              id="videos"
+              name="videos"
+              rows={3}
+              value={formData.videos.join('\n')}
+              onChange={(e) => {
+                const videos = e.target.value.split('\n').map(url => url.trim()).filter(Boolean)
+                setFormData({ ...formData, videos })
+              }}
+              placeholder={`https://youtube.com/watch?v=...\nhttps://example.com/video.mp4\nhttps://example.com/video2.mp4`}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
             />
             <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <span>💡</span>
-              YouTube लिंक किंवा थेट MP4 व्हिडिओ URL (पर्यायी)
+              <span>🎥</span>
+              प्रत्येक URL नवीन ओळीवर लिहा (पर्यायी)
             </p>
           </div>
         </div>

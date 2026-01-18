@@ -4,21 +4,21 @@ import { useState } from 'react'
 
 interface ImageGalleryProps {
   images: string[]
-  videoUrl?: string | null
+  videos: string[]
   bullName: string
 }
 
-export default function ImageGallery({ images, videoUrl, bullName }: ImageGalleryProps) {
+export default function ImageGallery({ images, videos, bullName }: ImageGalleryProps) {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(
-    images.length > 0 ? images[0] : videoUrl || null
+    images.length > 0 ? images[0] : videos.length > 0 ? videos[0] : null
   )
   const [mediaType, setMediaType] = useState<'image' | 'video'>(
-    images.length > 0 ? 'image' : 'video'
+    images.length > 0 ? 'image' : videos.length > 0 ? 'video' : 'image'
   )
 
   const allMedia = [
     ...images.map(img => ({ url: img, type: 'image' as const })),
-    ...(videoUrl ? [{ url: videoUrl, type: 'video' as const }] : [])
+    ...videos.map(url => ({ url, type: 'video' as const }))
   ]
 
   const handleThumbnailClick = (url: string, type: 'image' | 'video') => {

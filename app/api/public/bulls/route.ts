@@ -19,6 +19,8 @@ const publicBullSchema = z.object({
   phone: z.string().min(10),
   whatsapp: z.string().optional(),
   raceExperience: z.string().optional(),
+  images: z.array(z.string()).min(1, 'कमीत कमी 1 फोटो आवश्यक आहे'),
+  videos: z.array(z.string()).optional().default([]),
 })
 
 export async function GET() {
@@ -57,10 +59,7 @@ export async function POST(request: Request) {
   try {
     // No authentication required for public bull registration
     const body = await request.json()
-    const data = publicBullSchema.parse({
-      ...body,
-      videoUrl: body.videoUrl || undefined,
-    })
+    const data = publicBullSchema.parse(body)
 
     // Find or create a public user for public registrations
     let publicUser = await prisma.user.findFirst({
@@ -81,8 +80,19 @@ export async function POST(request: Request) {
 
     const bull = await prisma.bull.create({
       data: {
-        ...data,
-        images: [], // Empty array for images since they're not collected in the form
+        name: data.name,
+        breed: data.breed,
+        age: data.age,
+        price: data.price,
+        district: data.district,
+        taluka: data.taluka,
+        village: data.village,
+        description: data.description,
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        raceExperience: data.raceExperience,
+        images: data.images,
+        videos: data.videos,
         weight: 0, // Default weight for public registrations (since weight is not collected)
         ownerId: publicUser.id,
         status: 'Active', // Public registrations are active by default

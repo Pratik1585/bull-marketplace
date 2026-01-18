@@ -17,7 +17,7 @@ interface Bull {
   phone: string
   whatsapp?: string | null
   images: string[]
-  videoUrl?: string | null
+  videos: string[]
   raceExperience?: string | null
 }
 
@@ -42,7 +42,7 @@ export default function EditBullForm({ bull }: EditBullFormProps) {
     phone: bull.phone,
     whatsapp: bull.whatsapp || '',
     images: bull.images.join(', '),
-    videoUrl: bull.videoUrl || '',
+    videos: bull.videos || [],
     raceExperience: bull.raceExperience || '',
   })
 
@@ -80,7 +80,7 @@ export default function EditBullForm({ bull }: EditBullFormProps) {
           phone: formData.phone,
           whatsapp: formData.whatsapp || undefined,
           images: imagesArray,
-          videoUrl: formData.videoUrl || undefined,
+          videos: formData.videos,
           raceExperience: formData.raceExperience || undefined,
         }),
       })
@@ -334,15 +334,19 @@ export default function EditBullForm({ bull }: EditBullFormProps) {
           </div>
 
           <div>
-            <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-700 mb-2">
-              व्हिडिओ URL (YouTube किंवा MP4)
+            <label htmlFor="videos" className="block text-sm font-medium text-gray-700 mb-2">
+              व्हिडिओ URLs (YouTube किंवा MP4)
             </label>
-            <input
-              type="url"
-              id="videoUrl"
-              name="videoUrl"
-              value={formData.videoUrl}
-              onChange={handleChange}
+            <textarea
+              id="videos"
+              name="videos"
+              rows={3}
+              value={formData.videos.join('\n')}
+              onChange={(e) => {
+                const videos = e.target.value.split('\n').map(url => url.trim()).filter(Boolean)
+                setFormData({ ...formData, videos })
+              }}
+              placeholder={`https://youtube.com/watch?v=...\nhttps://example.com/video.mp4\nhttps://example.com/video2.mp4`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>

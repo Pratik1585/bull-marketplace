@@ -1,0 +1,53 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with Maharashtra colors -->
+  <defs>
+    <linearGradient id="maharashtraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF9933;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#128807;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bullGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#654321;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="url(#maharashtraGradient)" stroke="#333" stroke-width="2"/>
+
+  <!-- Bull silhouette -->
+  <g transform="translate(70, 80)">
+    <!-- Bull body -->
+    <ellipse cx="30" cy="35" rx="25" ry="20" fill="url(#bullGradient)"/>
+    <!-- Bull head -->
+    <ellipse cx="50" cy="25" rx="15" ry="12" fill="url(#bullGradient)"/>
+    <!-- Bull horns -->
+    <path d="M45 15 L40 10 L42 12 Z" fill="#8B4513"/>
+    <path d="M55 15 L60 10 L58 12 Z" fill="#8B4513"/>
+    <!-- Bull eyes -->
+    <circle cx="47" cy="22" r="1.5" fill="#000"/>
+    <circle cx="53" cy="22" r="1.5" fill="#000"/>
+    <!-- Bull nose -->
+    <ellipse cx="50" cy="28" rx="2" ry="1.5" fill="#000"/>
+    <!-- Bull legs -->
+    <rect x="25" y="45" width="3" height="15" fill="url(#bullGradient)"/>
+    <rect x="35" y="45" width="3" height="15" fill="url(#bullGradient)"/>
+    <!-- Bull tail -->
+    <path d="M15 35 Q10 30 12 25" stroke="url(#bullGradient)" stroke-width="2" fill="none"/>
+  </g>
+
+  <!-- Maharashtra symbol (stylized) -->
+  <g transform="translate(100, 40)">
+    <!-- Warli style hut elements -->
+    <polygon points="0,20 10,10 20,20" fill="#FF9933" opacity="0.8"/>
+    <rect x="8" y="20" width="4" height="10" fill="#128807" opacity="0.8"/>
+  </g>
+
+  <!-- Text elements -->
+  <text x="100" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">
+    महाराष्ट्र
+  </text>
+  <text x="100" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">
+    बैल बाजार
+  </text>
+</svg>

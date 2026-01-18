@@ -20,7 +20,7 @@ interface Bull {
   phone: string
   whatsapp?: string | null
   images: string[]
-  videoUrl?: string | null
+  videos: string[]
   raceExperience?: string | null
   status: string
   createdAt: Date

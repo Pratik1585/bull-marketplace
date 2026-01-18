@@ -22,7 +22,7 @@ const bullSchema = z.object({
   phone: z.string().min(10),
   whatsapp: z.string().optional(),
   images: z.array(z.string()).min(1),
-  videoUrl: z.string().url().optional().or(z.literal('')),
+  videos: z.array(z.string()).optional().default([]),
   raceExperience: z.string().optional(),
 })
 
@@ -70,10 +70,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const data = bullSchema.parse({
-      ...body,
-      videoUrl: body.videoUrl || undefined,
-    })
+    const data = bullSchema.parse(body)
 
     const bull = await prisma.bull.create({
       data: {

@@ -34,7 +34,7 @@ model Bull {
   phone         String   // संपर्क फोन
   whatsapp      String?  // WhatsApp नंबर
   images        String[] // फोटो URL ची यादी
-  videoUrl      String?  // व्हिडिओ URL (YouTube किंवा MP4)
+  videos        String[] // व्हिडिओ URL ची यादी
   status        String   @default("Active") // Active, Sold
   raceExperience String? // शर्यत अनुभव
   ownerId       String

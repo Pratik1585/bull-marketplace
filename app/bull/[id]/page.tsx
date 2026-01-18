@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import ImageGallery from '@/components/ImageGallery'
+import InstagramCarousel from '@/components/InstagramCarousel'
 import Navbar from '@/components/Navbar'
 
 export default async function BullDetailPage({
@@ -37,9 +37,9 @@ export default async function BullDetailPage({
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
           {/* Image and Video Gallery */}
           <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-4 sm:p-6">
-            <ImageGallery 
-              images={bull.images} 
-              videoUrl={bull.videoUrl}
+            <InstagramCarousel
+              images={bull.images}
+              videos={bull.videos}
               bullName={bull.name}
             />
           </div>

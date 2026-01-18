@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import MediaUpload from './MediaUpload'
 
 export default function RegisterBullForm() {
   const router = useRouter()
@@ -21,9 +22,18 @@ export default function RegisterBullForm() {
     whatsapp: '',
     raceExperience: '',
   })
+  const [images, setImages] = useState<string[]>([])
+  const [videos, setVideos] = useState<string[]>([])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate minimum photos requirement
+    if (images.length === 0) {
+      setError('कृपया कमीत कमी 1 फोटो अपलोड करा')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -45,6 +55,8 @@ export default function RegisterBullForm() {
           phone: formData.phone,
           whatsapp: formData.whatsapp || undefined,
           raceExperience: formData.raceExperience || undefined,
+          images: images,
+          videos: videos,
         }),
       })
 
@@ -191,6 +203,20 @@ export default function RegisterBullForm() {
             />
           </div>
         </div>
+      </div>
+
+      {/* Media Upload */}
+      <div className="bg-gradient-to-br from-green-50 to-white rounded-xl p-6 border border-gray-200">
+        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span className="text-2xl">📸🎥</span>
+          फोटो आणि व्हिडिओ
+        </h2>
+        <MediaUpload
+          images={images}
+          videos={videos}
+          onImagesChange={setImages}
+          onVideosChange={setVideos}
+        />
       </div>
 
       {/* Location Information */}
