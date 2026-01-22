@@ -94,13 +94,14 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
               महाराष्ट्रातील सर्वोत्तम बैलगाडा शर्यत बैल शोधा
             </p>
 
-            {/* CTA Button - Top Right */}
-            <div className="absolute top-1 right-1 xs:top-2 xs:right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 lg:top-6 lg:right-6 xl:top-8 xl:right-8 z-10">
+            {/* Trust-focused Green CTA Button */}
+            <div className="flex justify-center">
               <Link
                 href="/register-bull"
-                className="inline-block bg-white text-primary-700 px-1.5 py-0.5 xs:px-2 xs:py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 xl:px-6 xl:py-3 rounded-md xs:rounded-lg sm:rounded-lg md:rounded-xl lg:rounded-xl xl:rounded-xl font-bold hover:bg-gray-100 transition-all duration-200 shadow-sm hover:shadow-md xs:shadow-md xs:hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl transform hover:-translate-y-0.5 border-2 border-white/30 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-base whitespace-nowrap"
+                className="inline-block bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 text-center"
+                style={{ height: '54px', lineHeight: '1.2' }}
               >
-                🐂 तुमचा बैल विक्रीसाठी नोंदवा
+                + तुमचा बैल विक्रीसाठी नोंदवा
               </Link>
             </div>
           </div>
