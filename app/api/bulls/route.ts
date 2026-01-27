@@ -4,10 +4,9 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
-// Enable caching for better performance
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-export const revalidate = 300 // Cache for 5 minutes
+export const revalidate = 300
 
 const bullSchema = z.object({
   name: z.string().min(1),
@@ -26,23 +25,17 @@ const bullSchema = z.object({
   raceExperience: z.string().optional(),
 })
 
+/* ---------------- GET ---------------- */
 export async function GET() {
   try {
     const bulls = await prisma.bull.findMany({
-      where: {
-        status: 'Active'
-      },
+      where: { status: 'Active' },
       include: {
         owner: {
-          select: {
-            name: true,
-            email: true,
-          },
+          select: { name: true, email: true },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     })
 
     return NextResponse.json(bulls, {
@@ -51,25 +44,36 @@ export async function GET() {
       },
     })
   } catch (error) {
+    console.error('GET /api/bulls error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch bulls' },
+      { success: false, message: 'Failed to fetch bulls' },
       { status: 500 }
     )
   }
 }
 
+/* ---------------- POST ---------------- */
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { success: false, message: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const body = await request.json()
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json(
+        { success: false, message: 'Invalid JSON body' },
+        { status: 400 }
+      )
+    }
+
     const data = bullSchema.parse(body)
 
     const bull = await prisma.bull.create({
@@ -80,24 +84,31 @@ export async function POST(request: Request) {
       },
       include: {
         owner: {
-          select: {
-            name: true,
-            email: true,
-          },
+          select: { name: true, email: true },
         },
       },
     })
 
-    return NextResponse.json(bull, { status: 201 })
+    return NextResponse.json(
+      { success: true, bull },
+      { status: 201 }
+    )
   } catch (error) {
+    console.error('POST /api/bulls error:', error)
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
+        {
+          success: false,
+          message: 'Invalid input',
+          details: error.errors,
+        },
         { status: 400 }
       )
     }
+
     return NextResponse.json(
-      { error: 'Failed to create bull' },
+      { success: false, message: 'Failed to create bull' },
       { status: 500 }
     )
   }
