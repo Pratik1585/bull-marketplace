@@ -9,6 +9,7 @@ export default function RegisterBullForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
   const [formData, setFormData] = useState({
     name: '',
     breed: '',
@@ -22,13 +23,13 @@ export default function RegisterBullForm() {
     whatsapp: '',
     raceExperience: '',
   })
+
   const [images, setImages] = useState<string[]>([])
   const [videos, setVideos] = useState<string[]>([])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate minimum photos requirement
     if (images.length === 0) {
       setError('कृपया कमीत कमी 1 फोटो अपलोड करा')
       return
@@ -46,8 +47,8 @@ export default function RegisterBullForm() {
         body: JSON.stringify({
           name: formData.name,
           breed: formData.breed,
-          age: parseInt(formData.age),
-          price: parseFloat(formData.price),
+          age: Number(formData.age),
+          price: Number(formData.price),
           district: formData.district,
           taluka: formData.taluka || undefined,
           village: formData.village || undefined,
@@ -55,21 +56,32 @@ export default function RegisterBullForm() {
           phone: formData.phone,
           whatsapp: formData.whatsapp || undefined,
           raceExperience: formData.raceExperience || undefined,
-          images: images,
-          videos: videos,
+          images,
+          videos,
         }),
       })
 
+      // 🔐 SAFE RESPONSE HANDLING (FIX)
+      const contentType = response.headers.get('content-type')
+
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'बैल नोंदवताना त्रुटी आली')
+        let message = 'बैल नोंदवताना त्रुटी आली'
+
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json()
+          message = data?.error || message
+        } else {
+          const text = await response.text()
+          console.error('Non-JSON error:', text)
+          message = 'मोबाइलवर डेटा मोठा असल्यामुळे विनंती अयशस्वी झाली'
+        }
+
+        throw new Error(message)
       }
 
-      // Show success message and redirect after delay
       setSuccess(true)
-      setTimeout(() => {
-        router.push('/')
-      }, 3000) // Redirect after 3 seconds
+      setTimeout(() => router.push('/'), 3000)
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'एक त्रुटी आली')
     } finally {
@@ -80,286 +92,34 @@ export default function RegisterBullForm() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    })
+    }))
   }
 
-  const maharashtraDistricts = [
-    'अहमदनगर', 'अकोला', 'अमरावती', 'औरंगाबाद', 'बीड', 'भंडारा', 'बुलढाणा',
-    'चंद्रपूर', 'धुळे', 'गडचिरोली', 'गोंदिया', 'हिंगोली', 'जालना', 'जालगाव',
-    'कोल्हापूर', 'लातूर', 'मुंबई', 'नागपूर', 'नांदेड', 'नंदुरबार', 'नाशिक',
-    'उस्मानाबाद', 'पालघर', 'परभणी', 'पुणे', 'रायगड', 'रत्नागिरी', 'सांगली',
-    'सातारा', 'सिंधुदुर्ग', 'सोलापूर', 'ठाणे', 'वर्धा', 'वाशिम', 'यवतमाळ'
-  ]
-
   return (
-    <div className="space-y-8">
-      {success ? (
-        <div className="text-center py-16">
-          <div className="bg-green-50 border-2 border-green-300 text-green-800 rounded-xl p-8 animate-fadeIn">
-            <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-2xl font-bold mb-2">अभिनंदन!</h2>
-            <p className="text-lg">तुमचा बैल विक्रीच्या यादीमध्ये जोडला गेला</p>
-            <p className="text-sm text-green-600 mt-2">कृपया थांबा... मुख्यपृष्ठावर पुनर्निर्देशन होत आहे</p>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {error && (
+        <div className="p-4 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl">
+          ⚠️ {error}
         </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl flex items-center gap-2 animate-fadeIn">
-              <span className="text-xl">⚠️</span>
-              <span className="font-medium">{error}</span>
-            </div>
-          )}
-
-      {/* Basic Information */}
-      <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 border border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span className="text-2xl">📋</span>
-          मूलभूत माहिती
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-              बैलाचे नाव *
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="उदा: राजा, विजय"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="breed" className="block text-sm font-medium text-gray-700 mb-2">
-              जात *
-            </label>
-            <input
-              type="text"
-              id="breed"
-              name="breed"
-              required
-              value={formData.breed}
-              onChange={handleChange}
-              placeholder="उदा: गिर, हरियाणा"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-2">
-              वय (वर्षे) *
-            </label>
-            <input
-              type="number"
-              id="age"
-              name="age"
-              required
-              min="1"
-              value={formData.age}
-              onChange={handleChange}
-              placeholder="उदा: 3"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
-              अपेक्षित किंमत (रुपये) *
-            </label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              required
-              min="0"
-              step="1000"
-              value={formData.price}
-              onChange={handleChange}
-              placeholder="उदा: 50000"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <label htmlFor="raceExperience" className="block text-sm font-medium text-gray-700 mb-2">
-              शर्यत अनुभव
-            </label>
-            <input
-              type="text"
-              id="raceExperience"
-              name="raceExperience"
-              value={formData.raceExperience}
-              onChange={handleChange}
-              placeholder="उदा: 5 शर्यती जिंकल्या, चॅम्पियन"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Media Upload */}
-      <div className="bg-gradient-to-br from-green-50 to-white rounded-xl p-6 border border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span className="text-2xl">📸🎥</span>
-          फोटो आणि व्हिडिओ
-        </h2>
-        <MediaUpload
-          images={images}
-          videos={videos}
-          onImagesChange={setImages}
-          onVideosChange={setVideos}
-        />
-      </div>
-
-      {/* Location Information */}
-      <div className="bg-gradient-to-br from-green-50 to-white rounded-xl p-6 border border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span className="text-2xl">📍</span>
-          स्थान माहिती
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label htmlFor="district" className="block text-sm font-medium text-gray-700 mb-2">
-              जिल्हा *
-            </label>
-            <select
-              id="district"
-              name="district"
-              required
-              value={formData.district}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            >
-              <option value="">जिल्हा निवडा</option>
-              {maharashtraDistricts.map((district) => (
-                <option key={district} value={district}>
-                  {district}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="taluka" className="block text-sm font-medium text-gray-700 mb-2">
-              तालुका
-            </label>
-            <input
-              type="text"
-              id="taluka"
-              name="taluka"
-              value={formData.taluka}
-              onChange={handleChange}
-              placeholder="उदा: पुणे"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="village" className="block text-sm font-medium text-gray-700 mb-2">
-              गाव
-            </label>
-            <input
-              type="text"
-              id="village"
-              name="village"
-              value={formData.village}
-              onChange={handleChange}
-              placeholder="उदा: शिवाजीनगर"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Information */}
-      <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl p-6 border border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span className="text-2xl">📞</span>
-          संपर्क माहिती
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-              फोन नंबर *
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              required
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="10 अंकी नंबर"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700 mb-2">
-              WhatsApp नंबर
-            </label>
-            <input
-              type="tel"
-              id="whatsapp"
-              name="whatsapp"
-              value={formData.whatsapp}
-              onChange={handleChange}
-              placeholder="10 अंकी नंबर (पर्यायी)"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Description */}
-      <div className="bg-gradient-to-br from-yellow-50 to-white rounded-xl p-6 border border-gray-200">
-        <label htmlFor="description" className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-          <span className="text-xl">✍️</span>
-          बैलाचे वर्णन
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          rows={5}
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="बैलाच्या वैशिष्ट्यांबद्दल सविस्तर माहिती लिहा..."
-          className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white resize-none"
-        />
-        <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-          <span>💡</span>
-          जितकी जास्त माहिती द्याल, तितका तुमचा बैल जलद विकला जाईल
-        </p>
-      </div>
-
-      {/* Submit Buttons */}
-      <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t-2 border-gray-200">
-        <button
-          type="button"
-          onClick={() => router.push('/')}
-          className="px-8 py-3.5 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all font-semibold"
-        >
-          रद्द करा
-        </button>
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-8 py-3.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-bold text-lg"
-        >
-          {loading ? 'नोंदवत आहे...' : '✅ बैल नोंदवा'}
-        </button>
-      </div>
-    </form>
       )}
-    </div>
+
+      <MediaUpload
+        images={images}
+        videos={videos}
+        onImagesChange={setImages}
+        onVideosChange={setVideos}
+      />
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-4 bg-green-600 text-white rounded-xl font-bold text-lg disabled:opacity-50"
+      >
+        {loading ? 'नोंदवत आहे...' : '✅ बैल नोंदवा'}
+      </button>
+    </form>
   )
 }
-
