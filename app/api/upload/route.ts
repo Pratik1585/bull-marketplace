@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
+import sharp from 'sharp'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   try {
-    // Ensure content-type is multipart
     const contentType = request.headers.get('content-type') || ''
+
     if (!contentType.includes('multipart/form-data')) {
       return NextResponse.json(
         { error: 'Invalid content type' },
@@ -37,32 +38,31 @@ export async function POST(request: Request) {
         'image/png',
         'image/webp',
       ]
-      const allowedVideoTypes = [
-        'video/mp4',
-        'video/webm',
-        'video/quicktime',
-      ]
 
-      if (
-        !allowedImageTypes.includes(file.type) &&
-        !allowedVideoTypes.includes(file.type)
-      ) {
+      if (!allowedImageTypes.includes(file.type)) {
         continue
       }
 
-      const maxSize = allowedVideoTypes.includes(file.type)
-        ? 50 * 1024 * 1024
-        : 10 * 1024 * 1024
+      const buffer = Buffer.from(await file.arrayBuffer())
 
-      if (file.size > maxSize) {
-        continue
-      }
+      // 🔥 AUTO COMPRESS (NO SIZE LIMIT)
+      const compressed = await sharp(buffer)
+        .resize({ width: 1200 }) // limit width only
+        .jpeg({ quality: 70 })
+        .toBuffer()
 
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      const base64 = `data:${file.type};base64,${buffer.toString('base64')}`
+      const base64 = `data:image/jpeg;base64,${compressed.toString(
+        'base64'
+      )}`
 
       uploadedUrls.push(base64)
+    }
+
+    if (uploadedUrls.length === 0) {
+      return NextResponse.json(
+        { error: 'No valid images uploaded' },
+        { status: 400 }
+      )
     }
 
     return NextResponse.json(
@@ -71,6 +71,7 @@ export async function POST(request: Request) {
     )
   } catch (error) {
     console.error('Upload API Error:', error)
+
     return NextResponse.json(
       {
         error: 'Upload failed',
@@ -90,4 +91,3 @@ export async function GET() {
     { status: 200 }
   )
 }
-
