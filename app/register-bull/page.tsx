@@ -1,3 +1,5 @@
+'use client'
+
 import RegisterBullForm from "@/components/RegisterBullForm";
 
 export default function RegisterBullPage() {
