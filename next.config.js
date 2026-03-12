@@ -4,7 +4,7 @@ const nextConfig = {
 
   // Performance optimizations
   swcMinify: true,
-
+  poweredByHeader: false,
 
   // Image optimization
   images: {
@@ -24,7 +24,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, s-maxage=300, stale-while-revalidate=600',
+            value: 'no-store',
           },
         ],
       },

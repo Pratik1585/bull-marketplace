@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
-// Enable caching for better performance
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-export const revalidate = 300 // Cache for 5 minutes
 
 const publicBullSchema = z.object({
   name: z.string().min(1),
@@ -44,7 +42,7 @@ export async function GET() {
 
     return NextResponse.json(bulls, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'no-store',
       },
     })
   } catch (error) {

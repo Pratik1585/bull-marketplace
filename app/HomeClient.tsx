@@ -9,25 +9,25 @@ import Navbar from '@/components/Navbar'
 interface Bull {
   id: string
   name: string
-  breed: string
-  age: number
-  weight: number
+  breed?: string
+  age?: number
+  weight?: number
   price: number
-  district: string
+  district?: string
   taluka?: string | null
   village?: string | null
   description?: string | null
-  phone: string
+  phone?: string
   whatsapp?: string | null
   images: string[]
-  videos: string[]
+  videos?: string[]
   raceExperience?: string | null
-  status: string
+  status?: string
   createdAt: Date
-  updatedAt: Date
+  updatedAt?: Date
   owner: {
     name: string | null
-    email: string
+    email?: string
   }
 }
 
@@ -134,10 +134,7 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
                 placeholder="बैलाचे नाव शोधा..."
                 value={searchTerm}
                 onChange={(e) => {
-                  setSearchLoading(true)
                   setSearchTerm(e.target.value)
-                  // Brief loading state for UX
-                  setTimeout(() => setSearchLoading(false), 200)
                 }}
                 className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base"
               />
@@ -160,7 +157,7 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
             {Array.from({ length: 12 }).map((_, index) => (
-              <div key={index} className="animate-fadeIn" style={{ animationDelay: `${index * 0.05}s` }}>
+              <div key={index}>
                 <BullCardSkeleton />
               </div>
             ))}
@@ -197,8 +194,8 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
-            {filteredBulls.map((bull, index) => (
-              <div key={bull.id} className="animate-fadeIn" style={{ animationDelay: `${index * 0.05}s` }}>
+            {filteredBulls.map((bull) => (
+              <div key={bull.id}>
                 <BullCard bull={bull} />
               </div>
             ))}

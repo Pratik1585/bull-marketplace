@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 // ✅ Static optimization + revalidation
-export const revalidate = 60; // 60 seconds cache
+export const revalidate = 0; // Always fetch fresh data
 
 export default async function Home() {
   // ✅ Run both in parallel (faster)

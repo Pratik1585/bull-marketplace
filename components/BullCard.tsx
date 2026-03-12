@@ -4,13 +4,13 @@ interface BullCardProps {
   bull: {
     id: string
     name: string
-    breed: string
-    age: number
-    weight: number
+    breed?: string
+    age?: number
+    weight?: number
     price: number
-    district: string
+    district?: string
     images: string[]
-    status: string
+    status?: string
     raceExperience?: string | null
   }
 }
