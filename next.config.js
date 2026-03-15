@@ -16,13 +16,6 @@ const nextConfig = {
   // Compression
   compress: true,
 
-  // Increase body size limit for API routes (base64 image payloads)
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '10mb',
-    },
-  },
-
   // Headers for performance
   async headers() {
     return [
