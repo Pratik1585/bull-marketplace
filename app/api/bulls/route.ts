@@ -12,7 +12,6 @@ const bullSchema = z.object({
   name: z.string().min(1),
   breed: z.string().min(1),
   age: z.number().int().positive(),
-  weight: z.number().positive(),
   price: z.number().positive(),
   district: z.string().min(1),
   taluka: z.string().optional(),

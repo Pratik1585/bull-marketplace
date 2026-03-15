@@ -11,7 +11,6 @@ interface Bull {
   name: string
   breed?: string
   age?: number
-  weight?: number
   price: number
   district?: string
   taluka?: string | null

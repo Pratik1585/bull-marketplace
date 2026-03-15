@@ -13,7 +13,6 @@ export default function AddBullForm() {
     name: string
     breed: string
     age: string
-    weight: string
     price: string
     district: string
     taluka: string
@@ -27,7 +26,6 @@ export default function AddBullForm() {
     name: '',
     breed: '',
     age: '',
-    weight: '',
     price: '',
     district: '',
     taluka: '',
@@ -60,7 +58,6 @@ export default function AddBullForm() {
           name: formData.name,
           breed: formData.breed,
           age: parseInt(formData.age),
-          weight: parseFloat(formData.weight),
           price: parseFloat(formData.price),
           district: formData.district,
           taluka: formData.taluka || undefined,
@@ -163,23 +160,6 @@ export default function AddBullForm() {
               required
               min="1"
               value={formData.age}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">
-              वजन (किलो) *
-            </label>
-            <input
-              type="number"
-              id="weight"
-              name="weight"
-              required
-              min="1"
-              step="0.1"
-              value={formData.weight}
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
             />

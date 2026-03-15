@@ -6,7 +6,6 @@ interface BullCardProps {
     name: string
     breed?: string
     age?: number
-    weight?: number
     price: number
     district?: string
     images: string[]
@@ -17,7 +16,7 @@ interface BullCardProps {
 
 export default function BullCard({ bull }: BullCardProps) {
   const mainImage = bull.images && bull.images.length > 0 ? bull.images[0] : null
-  
+
   return (
     <Link href={`/bull/${bull.id}`}>
       <div className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 cursor-pointer group transform hover:-translate-y-1">
@@ -35,10 +34,10 @@ export default function BullCard({ bull }: BullCardProps) {
               <span className="text-6xl sm:text-7xl opacity-60">🐂</span>
             </div>
           )}
-          
+
           {/* Gradient Overlay on Hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          
+
           {/* Status Badge */}
           <div className="absolute top-2 right-2 z-10">
             {bull.status === 'Active' ? (
@@ -69,7 +68,7 @@ export default function BullCard({ bull }: BullCardProps) {
           <h3 className="font-bold text-gray-900 mb-1.5 line-clamp-1 text-sm sm:text-base group-hover:text-primary-600 transition-colors">
             {bull.name}
           </h3>
-          
+
           {/* District */}
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-primary-600">📍</span>

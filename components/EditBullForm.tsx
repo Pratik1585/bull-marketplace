@@ -8,7 +8,6 @@ interface Bull {
   name: string
   breed: string
   age: number
-  weight: number
   price: number
   district: string
   taluka?: string | null
@@ -33,7 +32,6 @@ export default function EditBullForm({ bull }: EditBullFormProps) {
     name: bull.name,
     breed: bull.breed,
     age: bull.age.toString(),
-    weight: bull.weight.toString(),
     price: bull.price.toString(),
     district: bull.district,
     taluka: bull.taluka || '',
@@ -71,7 +69,6 @@ export default function EditBullForm({ bull }: EditBullFormProps) {
           name: formData.name,
           breed: formData.breed,
           age: parseInt(formData.age),
-          weight: parseFloat(formData.weight),
           price: parseFloat(formData.price),
           district: formData.district,
           taluka: formData.taluka || undefined,
@@ -169,23 +166,6 @@ export default function EditBullForm({ bull }: EditBullFormProps) {
               required
               min="1"
               value={formData.age}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">
-              वजन (किलो) *
-            </label>
-            <input
-              type="number"
-              id="weight"
-              name="weight"
-              required
-              min="1"
-              step="0.1"
-              value={formData.weight}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />

@@ -25,7 +25,6 @@ model Bull {
   name          String   // बैलाचे नाव
   breed         String   // जात
   age           Int      // वय (वर्षे)
-  weight        Float    // वजन (किलो)
   price         Float    // किंमत (रुपये)
   district      String   // जिल्हा
   taluka        String?  // तालुका

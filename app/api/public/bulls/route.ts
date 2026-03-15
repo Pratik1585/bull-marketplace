@@ -91,7 +91,6 @@ export async function POST(request: Request) {
         raceExperience: data.raceExperience,
         images: data.images,
         videos: data.videos,
-        weight: 0, // Default weight for public registrations (since weight is not collected)
         ownerId: publicUser.id,
         status: 'Active', // Public registrations are active by default
       },

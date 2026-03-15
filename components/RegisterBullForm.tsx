@@ -156,7 +156,7 @@ export default function RegisterBullForm() {
           price: Number(formData.price),
           images: imageUrls,
           videos: [],
-          weight: 0,
+
         }),
       })
 
@@ -167,6 +167,7 @@ export default function RegisterBullForm() {
         window.location.href = '/'
       }, 2000)
     } catch (err) {
+      console.log(err)
       setError('त्रुटी आली')
     } finally {
       setLoading(false)

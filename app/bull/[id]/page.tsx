@@ -117,10 +117,7 @@ export default async function BullDetailPage({
                     <span className="font-semibold min-w-[80px]">वय:</span>
                     <span className="text-gray-800">{bull.age} वर्षे</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold min-w-[80px]">वजन:</span>
-                    <span className="text-gray-800">{bull.weight} किलो</span>
-                  </div>
+
                 </div>
               </div>
             </div>
