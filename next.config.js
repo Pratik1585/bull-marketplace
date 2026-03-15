@@ -16,9 +16,6 @@ const nextConfig = {
   // Compression
   compress: true,
 
-  // Disable file tracing — workaround for Next.js 14.0.4 micromatch stack overflow
-  outputFileTracing: false,
-
   // Headers for performance
   async headers() {
     return [
