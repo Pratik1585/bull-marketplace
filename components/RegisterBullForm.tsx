@@ -7,6 +7,7 @@ export default function RegisterBullForm() {
   const router = useRouter()
 
   const [loading, setLoading] = useState(false)
+  const [compressing, setCompressing] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [images, setImages] = useState<File[]>([])
@@ -39,36 +40,63 @@ export default function RegisterBullForm() {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  // ✅ Image compression
+  // ✅ Image compression — mobile-friendly with iterative quality reduction
   const compressImage = (file: File): Promise<File> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.readAsDataURL(file)
+
+      reader.onerror = () => reject(new Error('Failed to read file'))
 
       reader.onload = (event) => {
         const img = new Image()
         img.src = event.target?.result as string
 
+        img.onerror = () => reject(new Error('Failed to load image'))
+
         img.onload = () => {
           const canvas = document.createElement('canvas')
           const ctx = canvas.getContext('2d')
 
-          const MAX_WIDTH = 1200
-          const scale = MAX_WIDTH / img.width
+          const MAX_WIDTH = 1024
+          const MAX_HEIGHT = 1024
+          const MAX_FILE_SIZE = 500 * 1024 // 500KB target
 
-          canvas.width = MAX_WIDTH
-          canvas.height = img.height * scale
+          let width = img.width
+          let height = img.height
 
-          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height)
+          // Only downscale, never upscale
+          if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+            const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height)
+            width = Math.round(width * ratio)
+            height = Math.round(height * ratio)
+          }
 
-          canvas.toBlob(
-            (blob) => {
-              if (!blob) return
-              resolve(new File([blob], file.name, { type: 'image/jpeg' }))
-            },
-            'image/jpeg',
-            0.7
-          )
+          canvas.width = width
+          canvas.height = height
+          ctx?.drawImage(img, 0, 0, width, height)
+
+          // Iterative quality reduction to meet file size target
+          const tryCompress = (quality: number) => {
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) {
+                  resolve(file) // fallback to original if compression fails
+                  return
+                }
+                // If still too large and quality can go lower, try again
+                if (blob.size > MAX_FILE_SIZE && quality > 0.3) {
+                  tryCompress(quality - 0.1)
+                } else {
+                  resolve(new File([blob], file.name, { type: 'image/jpeg' }))
+                }
+              },
+              'image/jpeg',
+              quality
+            )
+          }
+
+          tryCompress(0.7)
         }
       }
     })
@@ -76,14 +104,23 @@ export default function RegisterBullForm() {
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (!files) return
+    if (!files || files.length === 0) return
 
-    const compressed: File[] = []
-    for (const file of Array.from(files)) {
-      const c = await compressImage(file)
-      compressed.push(c)
+    setCompressing(true)
+    setError('')
+
+    try {
+      const compressed: File[] = []
+      for (const file of Array.from(files)) {
+        const c = await compressImage(file)
+        compressed.push(c)
+      }
+      setImages(compressed)
+    } catch {
+      setError('फोटो कॉम्प्रेस करता आला नाही, कृपया पुन्हा प्रयत्न करा')
+    } finally {
+      setCompressing(false)
     }
-    setImages(compressed)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -259,10 +296,15 @@ export default function RegisterBullForm() {
               onChange={handleImageChange}
               className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-semibold file:bg-white file:text-gray-700 hover:file:bg-gray-50 cursor-pointer"
             />
-            <p className="mt-2 text-xs text-gray-500">किमान 1 फोटो आवश्यक</p>
-            {images.length > 0 && (
+            <p className="mt-2 text-xs text-gray-500">किमान 1 फोटो आवश्यक (फोटो आपोआप कॉम्प्रेस होतील)</p>
+            {compressing && (
+              <p className="mt-1 text-xs text-blue-600 font-medium animate-pulse">
+                ⏳ फोटो कॉम्प्रेस होत आहेत...
+              </p>
+            )}
+            {!compressing && images.length > 0 && (
               <p className="mt-1 text-xs text-green-600 font-medium">
-                ✅ {images.length} फोटो निवडले
+                ✅ {images.length} फोटो निवडले आणि कॉम्प्रेस झाले
               </p>
             )}
           </div>
@@ -391,11 +433,13 @@ export default function RegisterBullForm() {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || compressing}
               className="px-8 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-bold text-lg flex items-center justify-center gap-2"
             >
               {loading ? (
                 'नोंदवत आहे…'
+              ) : compressing ? (
+                'फोटो कॉम्प्रेस होत आहेत…'
               ) : (
                 <>
                   <span>✅</span> बैल नोंदवा
