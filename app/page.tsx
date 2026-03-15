@@ -30,7 +30,6 @@ export default async function Home() {
       orderBy: {
         createdAt: "desc",
       },
-      take: 12, // 🔥 20 → 12 (homepage faster, UI same)
     }),
   ]);
 

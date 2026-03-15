@@ -49,7 +49,7 @@ export default function HomeClient({ session, initialBulls }: HomePageProps) {
       fetch('/api/public/bulls')
         .then(res => res.json())
         .then(data => {
-          setBulls(data.slice(0, 20)) // Limit to 20 for performance
+          setBulls(data)
         })
         .catch(error => {
           console.error('Failed to fetch bulls:', error)
